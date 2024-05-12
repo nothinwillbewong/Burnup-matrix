@@ -1,0 +1,316 @@
+import numpy as np
+import math
+from scipy.linalg import expm
+import scipy.sparse as sp
+import scipy.sparse.linalg as sla
+import time
+
+class elements:
+        
+    def elnames(self, elname):
+        self.elname = 'Fe'
+        if self.elnum == '000': self.elname = 'Nn'
+        elif self.elnum == '001': self.elname = 'H'
+        elif self.elnum == '002': self.elname = 'He'
+        elif self.elnum == '003': self.elname = 'Li'
+        elif self.elnum == '004': self.elname = 'Be'
+        elif self.elnum == '005': self.elname = 'B'
+        elif self.elnum == '006': self.elname = 'C'
+        elif self.elnum == '007': self.elname = 'N'
+        elif self.elnum == '008': self.elname = 'O'
+        elif self.elnum == '009': self.elname = 'F'
+        elif self.elnum == '010': self.elname = 'Ne'
+        elif self.elnum == '011': self.elname = 'Na'
+        elif self.elnum == '012': self.elname = 'Mg'
+        elif self.elnum == '013': self.elname = 'Al'
+        elif self.elnum == '014': self.elname = 'Si'
+        elif self.elnum == '015': self.elname = 'P'
+        elif self.elnum == '016': self.elname = 'S'
+        elif self.elnum == '017': self.elname = 'Cl'
+        elif self.elnum == '018': self.elname = 'Ar'
+        elif self.elnum == '019': self.elname = 'K'
+        elif self.elnum == '020': self.elname = 'Ca'
+        elif self.elnum == '021': self.elname = 'Sc'
+        elif self.elnum == '022': self.elname = 'Ti'
+        elif self.elnum == '023': self.elname = 'V'
+        elif self.elnum == '024': self.elname = 'Cr'
+        elif self.elnum == '025': self.elname = 'Mn'
+        elif self.elnum == '026': self.elname = 'Fe'
+        elif self.elnum == '027': self.elname = 'Co'
+        elif self.elnum == '028': self.elname = 'Ni'
+        elif self.elnum == '029': self.elname = 'Cu'
+        elif self.elnum == '030': self.elname = 'Zn'
+        elif self.elnum == '031': self.elname = 'Ga'
+        elif self.elnum == '032': self.elname = 'Ge'
+        elif self.elnum == '033': self.elname = 'As'
+        elif self.elnum == '034': self.elname = 'Se'
+        elif self.elnum == '035': self.elname = 'Br'
+        elif self.elnum == '036': self.elname = 'Kr'
+        elif self.elnum == '037': self.elname = 'Rb'
+        elif self.elnum == '038': self.elname = 'Sr'
+        elif self.elnum == '039': self.elname = 'Y'
+        elif self.elnum == '040': self.elname = 'Zr'
+        elif self.elnum == '041': self.elname = 'Nb'
+        elif self.elnum == '042': self.elname = 'Mo'
+        elif self.elnum == '043': self.elname = 'Tc'
+        elif self.elnum == '044': self.elname = 'Ru'
+        elif self.elnum == '045': self.elname = 'Rh'
+        elif self.elnum == '046': self.elname = 'Pd'
+        elif self.elnum == '047': self.elname = 'Ag'
+        elif self.elnum == '048': self.elname = 'Cd'
+        elif self.elnum == '049': self.elname = 'In'
+        elif self.elnum == '050': self.elname = 'Sn'
+        elif self.elnum == '051': self.elname = 'Sb'
+        elif self.elnum == '052': self.elname = 'Te'
+        elif self.elnum == '053': self.elname = 'I'
+        elif self.elnum == '054': self.elname = 'Xe'
+        elif self.elnum == '055': self.elname = 'Cs'
+        elif self.elnum == '056': self.elname = 'Ba'
+        elif self.elnum == '057': self.elname = 'La'
+        elif self.elnum == '058': self.elname = 'Ce'
+        elif self.elnum == '059': self.elname = 'Pr'
+        elif self.elnum == '060': self.elname = 'Nd'
+        elif self.elnum == '061': self.elname = 'Pm'
+        elif self.elnum == '062': self.elname = 'Sm'
+        elif self.elnum == '063': self.elname = 'Eu'
+        elif self.elnum == '064': self.elname = 'Gd'
+        elif self.elnum == '065': self.elname = 'Tb'
+        elif self.elnum == '066': self.elname = 'Dy'
+        elif self.elnum == '067': self.elname = 'Ho'
+        elif self.elnum == '068': self.elname = 'Er'
+        elif self.elnum == '069': self.elname = 'Tm'
+        elif self.elnum == '070': self.elname = 'Yb'
+        elif self.elnum == '071': self.elname = 'Lu'
+        elif self.elnum == '072': self.elname = 'Hf'
+        elif self.elnum == '073': self.elname = 'Ta'
+        elif self.elnum == '074': self.elname = 'W'
+        elif self.elnum == '075': self.elname = 'Re'
+        elif self.elnum == '076': self.elname = 'Os'
+        elif self.elnum == '077': self.elname = 'Ir'
+        elif self.elnum == '078': self.elname = 'Pt'
+        elif self.elnum == '079': self.elname = 'Au'
+        elif self.elnum == '080': self.elname = 'Hg'
+        elif self.elnum == '081': self.elname = 'Ti'
+        elif self.elnum == '082': self.elname = 'Pb'
+        elif self.elnum == '083': self.elname = 'Bi'
+        elif self.elnum == '084': self.elname = 'Po'
+        elif self.elnum == '085': self.elname = 'At'
+        elif self.elnum == '086': self.elname = 'Rn'
+        elif self.elnum == '087': self.elname = 'Fr'
+        elif self.elnum == '088': self.elname = 'Ra'
+        elif self.elnum == '089': self.elname = 'Ac'
+        elif self.elnum == '090': self.elname = 'Th'
+        elif self.elnum == '091': self.elname = 'Pa'
+        elif self.elnum == '092': self.elname = 'U'
+        elif self.elnum == '093': self.elname = 'Np'
+        elif self.elnum == '094': self.elname = 'Pu'
+        elif self.elnum == '095': self.elname = 'Am'
+        elif self.elnum == '096': self.elname = 'Cm'
+        elif self.elnum == '097': self.elname = 'Bk'
+        elif self.elnum == '098': self.elname = 'Cf'
+        elif self.elnum == '099': self.elname = 'Es'
+
+           
+    def decay(self, elnum, isotope):# функция для извлечения данных из decay
+        self.elnum = elnum
+        self.isotope = isotope
+        self.elnames(elnum)
+        #print("Element: "+ self.elname)
+        path = '/home/daulet/Downloads/decay1/dec-'+self.elnum+'_' + self.elname +'_'+ self.isotope+'.endf'
+        data = []
+        
+        self.data2 = [[0]*8]*1000
+        k = 0
+        with open(path) as f:
+            for line in f:
+                data.append([str(x) for x in line.split()])
+        
+        for i in range(len(data)-1):
+            if data[i][len(data[i])-1]=='8457':
+                for j in range(len(data[i])):
+                    try:
+                        data[i][j]=float(data[i][j].replace('+','e'))
+                    except:
+                        data[i][j]=float(data[i][j].replace('-','e-'))
+                #print(data[i])
+                self.data2[k] = data[i]
+                k = k + 1
+                #print(self.data2)
+        return self.data2
+    def neutron(self, elnum, isotope):# функция для извлечения данных из neutron
+        self.elnum = elnum
+        self.isotope = isotope
+        self.elnames(elnum)
+        #print("Element: "+ self.elname)
+        path = '/home/daulet/Downloads/neutrons1/n-'+self.elnum+'_' + self.elname +'_'+ self.isotope+'.endf'
+        data = []
+        self.data3 = [[0]*8]*800
+        k = 0
+        
+        with open(path) as f:
+            for line in f:
+                data.append([str(x) for x in line.split()])
+
+        for i in range(len(data)-2):
+            if data[i][len(data[i])-1]=='3102':
+                try:
+                    for j in range(len(data[i])):
+                        data[i][5]=str(data[i][5])
+                        try:
+                            data[i][5]= data[i][5][:10]
+                            data[i][j]=float(data[i][j].replace('+','e'))
+                        except:
+                            data[i][5]=data[i][5][:10]
+                            data[i][j]=float(data[i][j].replace('-','e-'))
+                    #print(data[i])
+                except:
+                    continue
+                self.data3[k] = data[i]
+                k = k + 1
+        #print(self.data3)
+        return self.data3
+    
+    
+    def CRAM16(self, A, n0, dt):# M.Pusa(2016)(https://github.com/mit-crpg/opendeplete/blob/master/opendeplete/integrator/cram.py)
+
+
+        alpha = np.array([+2.124853710495224e-16,
+                          +5.464930576870210e+3 - 3.797983575308356e+4j,
+                          +9.045112476907548e+1 - 1.115537522430261e+3j,
+                          +2.344818070467641e+2 - 4.228020157070496e+2j,
+                          +9.453304067358312e+1 - 2.951294291446048e+2j,
+                          +7.283792954673409e+2 - 1.205646080220011e+5j,
+                          +3.648229059594851e+1 - 1.155509621409682e+2j,
+                          +2.547321630156819e+1 - 2.639500283021502e+1j,
+                          +2.394538338734709e+1 - 5.650522971778156e+0j],
+                         dtype=np.complex128)
+        theta = np.array([+0.0,
+                          +3.509103608414918 + 8.436198985884374j,
+                          +5.948152268951177 + 3.587457362018322j,
+                          -5.264971343442647 + 16.22022147316793j,
+                          +1.419375897185666 + 10.92536348449672j,
+                          +6.416177699099435 + 1.194122393370139j,
+                          +4.993174737717997 + 5.996881713603942j,
+                          -1.413928462488886 + 13.49772569889275j,
+                          -10.84391707869699 + 19.27744616718165j],
+                         dtype=np.complex128)
+
+        n = A.shape[0]
+
+        alpha0 = 2.124853710495224e-16
+
+        k = 8
+
+        self.y = np.array(n0, dtype=np.float64)
+        for l in range(1, k+1):
+            self.y = 2.0*np.real(alpha[l]*sla.spsolve(A*dt - theta[l]*sp.eye(n), self.y)) + self.y
+
+        self.y *= alpha0
+        return self.y
+        
+
+            
+            
+    def abundance(self):# функция для заполнения матрицы сжигания и вычисления ее экспоненты
+        k = 8.617*10**(-5)
+        n0 = np.array([0,0,0,61,0,0,0,0,0,0,])
+        
+        #print(k)
+        P = 0
+        #Q = 0
+        F = 10**16
+        T = 10*10**8
+        E = k*T
+        print(E)
+        A = np.zeros((10,10))
+        l = 0
+        g = 0
+        tim=10*8
+        lam = 0
+        sigma = []
+        h = 0
+        b=0
+        f = 0
+        for i in range(56, 57):
+            
+            f = 0
+            i ='0'+str(i)
+            for j in range(135,145):
+                g = j -135
+                f+=1
+                f+=g
+                if j<100:
+                    j = '0'+str(j)
+                else:
+                    j = str(j)
+                try:
+                    self.decay(i,j)
+                    if self.data2[3][4]>=6:
+                        ndk = int(self.data2[3][4]/6)#3309 elements
+                        #print(ndk)
+                        for z in range(0,ndk+1):
+                             if self.data2[4+z][0] == 2:
+                                P =self.data2[4+z][4]
+                                t = self.data2[0][1]
+                                lam = np.log(2)/t
+                                A[l][l]-=lam*P
+                                A[l+f][l]=lam*P
+                               # print(A[l][l])
+                        for z in range(0,ndk+1):
+                             if self.data2[4+z][0] == 1:
+                                P =self.data2[4+z][4]
+                                t = self.data2[0][1]
+                                lam = np.log(2)/t
+                                A[l][l]-=lam*P
+                                A[l-f][l]+=lam*P
+                        l+=1
+
+                        
+                    h+=1
+                    self.neutron(i,j)
+                    for x in range(3,len(self.data3)-1):
+                        self.data3[x][5]=float(self.data3[x][5])
+                        #print(self.data3[x][1])
+                        if E-E*0.2<self.data3[x][0]<E+E*0.2:
+                            sigma.append(self.data3[x][1])
+                        if E-E*0.2<self.data3[x][2]<E+E*0.2:
+                            sigma.append(self.data3[x][3])
+                        if E-E*0.2<self.data3[x][4]<E+E*0.2:
+                            sigma.append(self.data3[x][5])
+                    med = 0
+                    for k in sigma:
+                        med += k
+                    med=med/len(sigma)
+
+                    A[h][h]-=med*10**-23*F
+                    A[h+1][h]+=med*10**-23*F
+                    sigma = []
+                    b+=1
+                except:
+                    continue
+                    
+                    
+                    
+                    
+
+             
+        print(A)
+        start = time.time()
+        ex = expm(A*tim)
+        n = n0*ex
+        N =np.zeros(len(n))
+        for i in range(len(n)-1):
+            for j in range(len(n[i])-1):
+                N[i]+=n[i][j]
+                
+        end = time.time() - start
+        print(N)
+        print(end)
+        
+        
+        
+        start = time.time()    
+        self.CRAM16(A,n0,tim)
+        print(self.y)
+        end = time.time() - start
+        print(end)
