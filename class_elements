@@ -8,7 +8,7 @@ import time
 class elements:
         
     def elnames(self, elname):
-        self.elname = 'Fe'
+        self.elname = '0'
         if self.elnum == '000': self.elname = 'Nn'
         elif self.elnum == '001': self.elname = 'H'
         elif self.elnum == '002': self.elname = 'He'
@@ -115,10 +115,8 @@ class elements:
         self.elnum = elnum
         self.isotope = isotope
         self.elnames(elnum)
-        #print("Element: "+ self.elname)
         path = '/home/daulet/Downloads/decay1/dec-'+self.elnum+'_' + self.elname +'_'+ self.isotope+'.endf'
         data = []
-        
         self.data2 = [[0]*8]*1000
         k = 0
         with open(path) as f:
@@ -137,11 +135,11 @@ class elements:
                 k = k + 1
                 #print(self.data2)
         return self.data2
+    
     def neutron(self, elnum, isotope):# функция для извлечения данных из neutron
         self.elnum = elnum
         self.isotope = isotope
         self.elnames(elnum)
-        #print("Element: "+ self.elname)
         path = '/home/daulet/Downloads/neutrons1/n-'+self.elnum+'_' + self.elname +'_'+ self.isotope+'.endf'
         data = []
         self.data3 = [[0]*8]*800
@@ -162,12 +160,13 @@ class elements:
                         except:
                             data[i][5]=data[i][5][:10]
                             data[i][j]=float(data[i][j].replace('-','e-'))
-                    #print(data[i])
+                    
                 except:
                     continue
+                    
                 self.data3[k] = data[i]
                 k = k + 1
-        #print(self.data3)
+        
         return self.data3
     
     
@@ -213,7 +212,7 @@ class elements:
             
     def abundance(self):# функция для заполнения матрицы сжигания и вычисления ее экспоненты
         k = 8.617*10**(-5)
-        n0 = np.array([0,0,0,61,0,0,0,0,0,0,])
+        n0 = np.array([0,0,0,0.61,0,0,0,0,0,0,])
         
         #print(k)
         P = 0
@@ -231,11 +230,11 @@ class elements:
         h = 0
         b=0
         f = 0
-        for i in range(56, 57):
+        for i in range(56, 57):#выбираем диапазон элементов
             
             f = 0
             i ='0'+str(i)
-            for j in range(135,145):
+            for j in range(135,145):#выбираем диапозон масс
                 g = j -135
                 f+=1
                 f+=g
@@ -246,7 +245,7 @@ class elements:
                 try:
                     self.decay(i,j)
                     if self.data2[3][4]>=6:
-                        ndk = int(self.data2[3][4]/6)#3309 elements
+                        ndk = int(self.data2[3][4]/6)
                         #print(ndk)
                         for z in range(0,ndk+1):
                              if self.data2[4+z][0] == 2:
@@ -296,7 +295,7 @@ class elements:
              
         print(A)
         start = time.time()
-        ex = expm(A*tim)
+        ex = expm(A*tim)# метод аппроксимации Паде
         n = n0*ex
         N =np.zeros(len(n))
         for i in range(len(n)-1):
@@ -310,7 +309,10 @@ class elements:
         
         
         start = time.time()    
-        self.CRAM16(A,n0,tim)
+        self.CRAM16(A,n0,tim)#метод CRAM
         print(self.y)
         end = time.time() - start
         print(end)
+
+
+                
